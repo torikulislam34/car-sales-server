@@ -82,7 +82,7 @@ async function run () {
         app.delete('/addBook/:id', async(req,res)=>{
             const id = req.params.id;
             console.log('delete user id', id);
-            res.json(1)
+            res.json('hello')
         })
     }
     finally{
