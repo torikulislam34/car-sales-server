@@ -1,5 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config();
 const cors = require('cors');
 
@@ -23,6 +24,7 @@ async function run () {
         const ProductsCollection = database.collection('products');
         const ProductsReviewCollection = database.collection('productsReview');
         const bookingCollection = database.collection("booking");
+        const adminCollection = database.collection('admin');
 
         // Get products API
         app.get('/products', async(req, res) => {
@@ -81,8 +83,19 @@ async function run () {
         // DELETE BOOKER
         app.delete('/addBook/:id', async(req,res)=>{
             const id = req.params.id;
-            console.log('delete user id', id);
-            res.json('hello')
+            const query = { _id: ObjectId(id) };
+            const result = await bookingCollection.deleteOne(query);
+            console.log('delete user id', result);
+            res.json(result)
+        })
+
+        app.put('/admin', async (req, res) => {
+            const user = req.body;
+            console.log('put', user);
+            const filter = {email: user.email};
+            const updateDoc = {$set: {role: 'admin'} };
+            const result = await adminCollection.updateOne(filter, updateDoc);
+            res.send(result);
         })
     }
     finally{
